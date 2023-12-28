@@ -11,6 +11,7 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text BestScoreText;
     public GameObject GameOverText;
     
     private bool m_Started = false;
@@ -36,6 +37,8 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+
+        Highscore(SaveObject.Instance.userName, m_Points);
     }
 
     private void Update()
@@ -70,12 +73,39 @@ public class MainManager : MonoBehaviour
 
     public void GameOver()
     {
+        Highscore(SaveObject.Instance.userName, m_Points);
         m_GameOver = true;
         GameOverText.SetActive(true);
+        SaveObject.Instance.SaveHighscore();
     }
 
     public void BackToMenu()
     {
         SceneManager.LoadScene(1);
+    }
+
+    public void CheckTheName()//Test for Instance of SaveObject, and for username
+    {
+        if(SaveObject.Instance != null)
+        {
+            Debug.Log("username is: " + SaveObject.Instance.userName);
+        }
+
+        if(SaveObject.Instance == null)
+        {
+            Debug.Log("Instance is null");
+        }
+    }
+
+    public void Highscore(string name, int points)//Check if a score is higher than the current highscore
+    {
+        if(points > SaveObject.Instance.curHighscore)
+        {
+
+            SaveObject.Instance.curHighName = name;
+            SaveObject.Instance.curHighscore = points;
+        }
+
+        BestScoreText.text = "Best Score: " + SaveObject.Instance.curHighName + " : " + SaveObject.Instance.curHighscore;
     }
 }
